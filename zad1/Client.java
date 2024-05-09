@@ -105,19 +105,17 @@ public class Client extends Application {
             return stringToList(result);
         }
     }
-
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
     private List<String> stringToList(String response) {
         String[] split = response.split(":");
         return new ArrayList<String>(Arrays.asList(split));
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public void start(Stage primaryStage) {
