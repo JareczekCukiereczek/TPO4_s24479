@@ -21,6 +21,10 @@ public class Server {
     public String topicsPath="zad1/data/topics.txt";
     public String newsPath="zad1/data/news.txt";
     public String topicsClientsPath="zad1/data/topicsClients.txt";
+    //oblsuga requestu
+    private static Charset charset = StandardCharsets.UTF_8;
+    private ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+    private StringBuffer request = new StringBuffer();
 
     public Server(String host, int port) {
         initializeTopics();
@@ -88,9 +92,7 @@ public class Server {
         }
     }
 
-    private static Charset charset = StandardCharsets.UTF_8;
-    private ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-    private StringBuffer request = new StringBuffer();
+
 
     private void serviceRequest(SocketChannel socketChannel) {
         if (!socketChannel.isOpen()) {
