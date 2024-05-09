@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zad1.ClientController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+    </rowConstraints>
+    <children>
+        <AnchorPane prefHeight="800.0" prefWidth="600.0" GridPane.columnIndex="1" stylesheets="@client.css">
+            <children>
+                <TextField fx:id="username" layoutX="10.0" layoutY="18.0" prefWidth="150.0" />
+                <ComboBox fx:id="userTopics" layoutX="10.0" layoutY="50.0" prefWidth="150.0" />
+                <Button layoutX="10.0" layoutY="90.0" mnemonicParsing="false" onAction="#subscribe" text="Sub" />
+                <Button layoutX="10.0" layoutY="130.0" mnemonicParsing="false" onAction="#unsubscribe" text="Unsub" />
+                <Button layoutX="10.0" layoutY="170.0" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
+            </children>
+        </AnchorPane>
+        <AnchorPane>
+            <children>
+                <ComboBox fx:id="allTopics" layoutX="10.0" layoutY="160.0" prefWidth="150.0" />
+                <TextArea fx:id="topicNews" layoutX="170.0" layoutY="100.0" prefHeight="880.0" prefWidth="330.0" />
+            </children>
+        </AnchorPane>
+    </children>
+</GridPane>

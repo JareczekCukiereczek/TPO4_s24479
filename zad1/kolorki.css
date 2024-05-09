@@ -1,0 +1,20 @@
+/* kolorki.css */
+.text-area {
+    -fx-background-color: #f4f4f4;
+    -fx-font-size: 14px;
+}
+
+.combo-box {
+    -fx-background-color: #ffffff;
+    -fx-font-size: 14px;
+}
+
+.button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+.button:hover {
+    -fx-background-color: #45a049;
+}

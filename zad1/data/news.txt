@@ -1,0 +1,6 @@
+Cars:passat:gwagon:audi s3:bmw:mercedes:ferrari:cupra:maserati:bugatti:ford:ibiza:brabus:fiat
+Company:gucci:prada:lv:nike
+Pogoda:Warszawa20:Poznan40
+Technology:iphone12
+Programming:js:java:c#:docker
+

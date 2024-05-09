@@ -1,0 +1,34 @@
+/* Style for TextField with fx:id="username" */
+#username {
+    -fx-background-color: #f0f0f0; /* Light gray background */
+    -fx-border-color: #ccc; /* Light gray border */
+    -fx-border-radius: 5px; /* Rounded border */
+}
+
+/* Style for ComboBox with fx:id="userTopics" */
+#userTopics {
+    -fx-background-color: #fff; /* White background */
+    -fx-border-color: #ccc; /* Light gray border */
+    -fx-border-radius: 5px; /* Rounded border */
+}
+
+/* Style for Button elements */
+.button {
+    -fx-background-color: #007bff; /* Blue background */
+    -fx-text-fill: #fff; /* White text */
+    -fx-background-radius: 5px; /* Rounded corners */
+}
+
+/* Style for ComboBox with fx:id="allTopics" */
+#allTopics {
+    -fx-background-color: #fff; /* White background */
+    -fx-border-color: #ccc; /* Light gray border */
+    -fx-border-radius: 5px; /* Rounded border */
+}
+
+/* Style for TextArea with fx:id="topicNews" */
+#topicNews {
+    -fx-background-color: #f0f0f0; /* Light gray background */
+    -fx-border-color: #ccc; /* Light gray border */
+    -fx-border-radius: 5px; /* Rounded border */
+}
