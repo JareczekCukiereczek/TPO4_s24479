@@ -17,69 +17,44 @@ import java.util.Collections;
 import java.util.List;
 
 public class Client extends Application {
-    private Socket socket;
-    private PrintWriter out = null;
-    private BufferedReader in = null;
     private String name;
+    private Socket socket;
+    private PrintWriter printWriter = null;
+    private BufferedReader reader = null;
+
 
     public Client() {
         this.name = "client";
         try {
             socket = new Socket("localhost", 5001);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            printWriter = new PrintWriter(socket.getOutputStream(), true);
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    public String subscribe(String topic) throws IOException {
-        out.println(this.name + ":subscribe:" + topic);
-        String response = in.readLine();
-        System.out.println(response);
-
-        if (response.startsWith("0")) {
-            return in.readLine();
-        } else {
-            return "Błąd wystąpił";
-        }
-    }
-
-    public String unSubscribe(String topic) throws IOException {
-        out.println(this.name + ":unsubscribe:" + topic);
-        String response = in.readLine();
-        boolean ok = response.startsWith("0");
-
-        if (ok) {
-            return in.readLine();
-        } else {
-            return "Błąd wystąpił";
-        }
-    }
-
     public List<String> getAllTopics() throws IOException {
-        out.println(this.name + ":getAllTopics");
-        String response = in.readLine();
-        boolean ok = response.startsWith("0");
+        printWriter.println(this.name + ":getAllTopics");
+        String response = reader.readLine();
+        boolean correct = response.startsWith("0");
 
-        if (ok) {
-            String topicsString = in.readLine();
+        if (correct) {
+            String topicsString = reader.readLine();
             return stringToList(topicsString);
         } else {
             return Collections.emptyList();
         }
     }
-
     public List<String> getMyTopics() throws IOException {
-        out.println(this.name + ":getMyTopics");
-        String response = in.readLine();
+        printWriter.println(this.name + ":getMyTopics");
+        String response = reader.readLine();
 
         if (response == null || response.isEmpty()) {
             return new ArrayList<>();
         }
 
-        boolean ok = response.startsWith("0");
-        String result = ok ? in.readLine() : "Błąd wystąpił";
+        boolean correct = response.startsWith("0");
+        String result = correct ? reader.readLine() : "Błąd wystąpił";
 
         if (result.isEmpty()) {
             return new ArrayList<>();
@@ -88,16 +63,41 @@ public class Client extends Application {
         }
     }
 
-    public List<String> getNewsOnTopic(String topic) throws IOException {
-        out.println(this.name + ":newsOnTopic:" + topic);
-        String response = in.readLine();
+    public String subscribeTopic(String topic) throws IOException {
+        printWriter.println(this.name + ":subscribe:" + topic);
+        String response = reader.readLine();
+        System.out.println(response);
+
+        if (response.startsWith("0")) {
+            return reader.readLine();
+        } else {
+            return "Błąd wystąpił";
+        }
+    }
+
+    public String unsubscribeTopic(String topic) throws IOException {
+        printWriter.println(this.name + ":unsubscribe:" + topic);
+        String response = reader.readLine();
+        boolean correct = response.startsWith("0");
+
+        if (correct) {
+            return reader.readLine();
+        } else {
+            return "ERROR";
+        }
+    }
+
+
+    public List<String> getNewsTopic(String topic) throws IOException {
+        printWriter.println(this.name + ":newsOnTopic:" + topic);
+        String response = reader.readLine();
 
         if (response == null || response.isEmpty()) {
             return new ArrayList<>();
         }
 
-        boolean ok = response.startsWith("0");
-        String result = ok ? in.readLine() : "Błąd wystąpił";
+        boolean correct = response.startsWith("0");
+        String result = correct ? reader.readLine() : "ERROR";
 
         if (result.isEmpty()) {
             return new ArrayList<>();
@@ -107,8 +107,8 @@ public class Client extends Application {
     }
 
     private List<String> stringToList(String response) {
-        String[] splitted = response.split(":");
-        return new ArrayList<String>(Arrays.asList(splitted));
+        String[] split = response.split(":");
+        return new ArrayList<String>(Arrays.asList(split));
     }
 
     public String getName() {
@@ -122,7 +122,7 @@ public class Client extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("sample.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("client.fxml"));
             Parent root = fxmlLoader.load();
 
             ClientController controller = fxmlLoader.getController();
@@ -131,7 +131,7 @@ public class Client extends Application {
             }
             controller.setClient(this);
 
-            primaryStage.setTitle("Klient");
+            primaryStage.setTitle("Klient s24479");
             primaryStage.setScene(new Scene(root, 1920, 1080));
             primaryStage.show();
         } catch (Exception e) {

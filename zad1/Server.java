@@ -32,12 +32,12 @@ public class Server {
     }
 
     private void initializeTopics() {
-        loadTopicsFromFile(topicsPath, topics);
+        loaderTopicsFile(topicsPath, topics);
         topics.forEach(System.out::println);
     }
 
     private void initializeNews() {
-        loadNewsFromFile(newsPath, topicNews);
+        loaderNewsFile(newsPath, topicNews);
         topicNews.forEach((key, value) -> System.out.println(key + " " + value));
     }
 
@@ -105,83 +105,83 @@ public class Server {
                 int i = socketChannel.read(byteBuffer);
                 if (i > 0) {
                     byteBuffer.flip();
-                    CharBuffer cbuf = charset.decode(byteBuffer);
-                    while (cbuf.hasRemaining()) {
-                        char c = cbuf.get();
-                        if (c == '\n' || c == '\r') {
+                    CharBuffer charBuffer = charset.decode(byteBuffer);
+                    while (charBuffer.hasRemaining()) {
+                        char chars = charBuffer.get();
+                        if (chars == '\n' || chars == '\r') {
                             break readLoop;
                         } else {
-                            request.append(c);
+                            request.append(chars);
                         }
                     }
                 }
             }
-            String[] req = request.toString().split(":");
-            String client = req[0];
-            String cmd = req[1];
+            String[] requestToParse = request.toString().split(":");
+            String client = requestToParse[0];
+            String command = requestToParse[1];
 
 
             switch (client) {
                 case "publisher":
-                    switch (cmd) {
+                    switch (command) {
                         case "getAllTopics":
-                            sendResponse(socketChannel, 0, listToString(topics));
+                            responseSender(socketChannel, 0, listToStringFormat(topics));
                             break;
                         case "getAllNewsTopics":
-                            if (req.length != 3) {
-                                sendResponse(socketChannel, 1, null);
+                            if (requestToParse.length != 3) {
+                                responseSender(socketChannel, 1, null);
                             } else {
-                                sendResponse(socketChannel, 0, listToString(topicNews.get(req[2])));
+                                responseSender(socketChannel, 0, listToStringFormat(topicNews.get(requestToParse[2])));
                             }
                             break;
                         case "addTopic":
-                            if (req.length != 3) {
-                                sendResponse(socketChannel, 1, null);
+                            if (requestToParse.length != 3) {
+                                responseSender(socketChannel, 1, null);
                                 System.out.println("Jestem w addTopic1");
                             } else {
-                                topics.add(req[2]);
+                                topics.add(requestToParse[2]);
                                 System.out.println("Jestem w addTopic2");
-                                saveListToFile(topicsPath, topics);
-                                sendResponse(socketChannel, 0, " " + req[2]);
+                                ListSaveFile(topicsPath, topics);
+                                responseSender(socketChannel, 0, " " + requestToParse[2]);
                             }
                             break;
                         case "deleteTopic":
-                            if (req.length != 3) {
-                                sendResponse(socketChannel, 1, null);
-                            } else if (topicNews.containsKey(req[2]) && topicNews.get(req[2]).size() != 0) {
+                            if (requestToParse.length != 3) {
+                                responseSender(socketChannel, 1, null);
+                            } else if (topicNews.containsKey(requestToParse[2]) && topicNews.get(requestToParse[2]).size() != 0) {
                                 System.out.println("Jestem w deleteTopic1");
-                                sendResponse(socketChannel, 0, "");
+                                responseSender(socketChannel, 0, "");
                             } else {
-                                topics.remove(req[2]);
+                                topics.remove(requestToParse[2]);
                                 System.out.println("Usuwam topic");
-                                saveListToFile(topicsPath, topics);
-                                sendResponse(socketChannel, 0, "" + req[2]);
+                                ListSaveFile(topicsPath, topics);
+                                responseSender(socketChannel, 0, "" + requestToParse[2]);
                             }
                             break;
                         case "addNewsTopic":
-                            if (req.length != 4) {
-                                sendResponse(socketChannel, 1, null);
+                            if (requestToParse.length != 4) {
+                                responseSender(socketChannel, 1, null);
                             } else {
-                                topicNews.computeIfAbsent(req[2], k -> new ArrayList<>()).add(req[3]);
-                                saveMapToFile(newsPath, topicNews);
-                                sendResponse(socketChannel, 0, " " + req[2]);
+                                topicNews.computeIfAbsent(requestToParse[2], k -> new ArrayList<>()).add(requestToParse[3]);
+                                MapSaveFile(newsPath, topicNews);
+                                responseSender(socketChannel, 0, " " + requestToParse[2]);
                             }
                             break;
                         case "deleteNewsTopic":
-                            if (req.length != 4) {
-                                sendResponse(socketChannel, 1, null);
+                            if (requestToParse.length != 4) {
+                                responseSender(socketChannel, 1, null);
                                 System.out.println("Jestem w deleteNewsTopic1");
                             } else {
                                 System.out.println("Jestem w deleteNewsTopic2");
-                                String topic = req[2];
-                                String newsToDelete = req[3];
+                                String topic = requestToParse[2];
+                                String newsToDelete = requestToParse[3];
                                 if (topicNews.containsKey(topic) && topicNews.get(topic).contains(newsToDelete)) {
                                     topicNews.get(topic).remove(newsToDelete);
-                                    saveMapToFile(newsPath, topicNews);
-                                    sendResponse(socketChannel, 0, "Usunięto wiadomość z tematu " + topic);
+                                    MapSaveFile(newsPath, topicNews);
+                                    responseSender(socketChannel, 0, "Usunięto wiadomość z tematu " + topic);
                                 } else {
                                     System.out.println("Podana wiadomość nie istnieje w temacie");
-                                    sendResponse(socketChannel, 1, "Podana wiadomość nie istnieje w temacie " + topic);
+                                    responseSender(socketChannel, 1, "Podana wiadomość nie istnieje w temacie " + topic);
                                 }
                             }
                             break;
@@ -189,47 +189,47 @@ public class Server {
                     break;
 
                 default:
-                    switch (cmd) {
+                    switch (command) {
                         case "bye":
-                            sendResponse(socketChannel, 0, null);
+                            responseSender(socketChannel, 0, null);
                             socketChannel.close();
                             socketChannel.socket().close();
                             break;
                         case "subscribe":
-                            if (req.length != 3) {
-                                sendResponse(socketChannel, 1, null);
+                            if (requestToParse.length != 3) {
+                                responseSender(socketChannel, 1, null);
                             } else {
-                                clientsTopics.computeIfAbsent(client, k -> new ArrayList<>()).add(req[2]);
-                                sendResponse(socketChannel, 0, "subscribe");
-                                saveMapToFile(topicsClientsPath, clientsTopics);
+                                clientsTopics.computeIfAbsent(client, k -> new ArrayList<>()).add(requestToParse[2]);
+                                responseSender(socketChannel, 0, "subscribe");
+                                MapSaveFile(topicsClientsPath, clientsTopics);
                             }
                             break;
                         case "unsubscribe":
-                            if (req.length != 3) {
-                                sendResponse(socketChannel, 1, null);
+                            if (requestToParse.length != 3) {
+                                responseSender(socketChannel, 1, null);
                             } else {
-                                clientsTopics.get(client).remove(req[2]);
-                                sendResponse(socketChannel, 0, "unsubscribe");
+                                clientsTopics.get(client).remove(requestToParse[2]);
+                                responseSender(socketChannel, 0, "unsubscribe");
                             }
                             break;
                         case "getAllTopics":
-                            sendResponse(socketChannel, 0, listToString(topics));
+                            responseSender(socketChannel, 0, listToStringFormat(topics));
                             break;
                         case "getMyTopics":
                             if (!clientsTopics.containsKey(client)) {
-                                sendResponse(socketChannel, 0, "");
+                                responseSender(socketChannel, 0, "");
                             } else {
-                                sendResponse(socketChannel, 0, listToString(clientsTopics.get(client)));
+                                responseSender(socketChannel, 0, listToStringFormat(clientsTopics.get(client)));
                             }
                             break;
                         case "newsOnTopic":
-                            if (req.length != 3) {
-                                sendResponse(socketChannel, 1, null);
+                            if (requestToParse.length != 3) {
+                                responseSender(socketChannel, 1, null);
                             } else {
-                                if (!topicNews.containsKey(req[2])) {
-                                    sendResponse(socketChannel, 0, "");
+                                if (!topicNews.containsKey(requestToParse[2])) {
+                                    responseSender(socketChannel, 0, "");
                                 } else {
-                                    sendResponse(socketChannel, 0, listToString(topicNews.get(req[2])));
+                                    responseSender(socketChannel, 0, listToStringFormat(topicNews.get(requestToParse[2])));
                                 }
                             }
                             break;
@@ -242,54 +242,41 @@ public class Server {
 
     private StringBuffer response = new StringBuffer();
 
-    private void sendResponse(SocketChannel sc, int rc, String addMsg) throws IOException {
+    private void responseSender(SocketChannel channel, int ssss, String mess) throws IOException {
         response.setLength(0);
-        response.append(rc);
+        response.append(ssss);
         response.append("\n");
-        if (addMsg != null) {
-            response.append(addMsg);
+        if (mess != null) {
+            response.append(mess);
             response.append("\n");
         }
         ByteBuffer byteBuffer = charset.encode(CharBuffer.wrap(response));
-        sc.write(byteBuffer);
+        channel.write(byteBuffer);
     }
 
     public void saveToFile(String path, String textToSave) {
-        BufferedWriter bw = null;
+        BufferedWriter bufferedWriter = null;
         try {
             File file = new File(path);
             if (!file.exists()) {
                 file.createNewFile();
             }
-            FileWriter fw = new FileWriter(file);
-            bw = new BufferedWriter(fw);
-            bw.write(textToSave);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+            FileWriter fileWriter = new FileWriter(file);
+            bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(textToSave);
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
         finally {
             try{
-                if(bw!=null)
-                    bw.close();
+                if(bufferedWriter!=null)
+                    bufferedWriter.close();
             }catch(Exception ex){
 
             }
         }
     }
-
-    private void loadTopicsFromFile(String path, List<String> list) {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(path));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                list.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadNewsFromFile(String path, Map<String, List<String>> map) {
+    private void loaderNewsFile(String path, Map<String, List<String>> map) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(path));
             String line;
@@ -300,6 +287,18 @@ public class Server {
                     helperList.add(mapArray[i]);
                 }
                 map.put(mapArray[0], helperList);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loaderTopicsFile(String paths, List<String> list) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(paths));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                list.add(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -323,7 +322,7 @@ public class Server {
         }
     }
 
-    private void saveListToFile(String path, List<String> list) {
+    private void ListSaveFile(String path, List<String> list) {
         StringBuilder toSave = new StringBuilder();
         for (String item : list) {
             toSave.append(item).append("\n");
@@ -331,23 +330,23 @@ public class Server {
         saveToFile(path, toSave.toString());
     }
 
-    private void saveMapToFile(String path, Map<String, List<String>> map) {
-        StringBuilder toSave = new StringBuilder();
+    private void MapSaveFile(String path, Map<String, List<String>> map) {
+        StringBuilder saver = new StringBuilder();
         for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-            toSave.append(entry.getKey());
+            saver.append(entry.getKey());
             for (String value : entry.getValue()) {
-                toSave.append(":").append(value);
+                saver.append(":").append(value);
             }
-            toSave.append("\n");
+            saver.append("\n");
         }
-        saveToFile(path, toSave.toString());
+        saveToFile(path, saver.toString());
     }
 
     public static void main(String[] args) {
         new Server("localhost", 5001);
     }
 
-    public static String listToString(List<String> list) {
+    public static String listToStringFormat(List<String> list) {
         StringBuilder result = new StringBuilder();
         if (list.isEmpty()) {
             return "";

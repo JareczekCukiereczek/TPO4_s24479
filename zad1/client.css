@@ -1,5 +1,5 @@
 /* Style for TextField with fx:id="username" */
-#username {
+#user {
     -fx-background-color: #f0f0f0; /* Light gray background */
     -fx-border-color: #ccc; /* Light gray border */
     -fx-border-radius: 5px; /* Rounded border */

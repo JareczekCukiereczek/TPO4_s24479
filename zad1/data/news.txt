@@ -3,4 +3,4 @@ Company:gucci:prada:lv:nike
 Pogoda:Warszawa20:Poznan40
 Technology:iphone12
 Programming:js:java:c#:docker
-
+Polityka

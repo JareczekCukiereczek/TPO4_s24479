@@ -1,13 +1,12 @@
 package zad1;
 
-import javafx.event.ActionEvent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 
 import java.io.IOException;
 
-public class PublisherSample {
-    public TextArea newsToTopic;
+public class PublisherGUIOperation {
+    public TextArea newsToCurrentTopic;
     public ComboBox<String> allTopics;
     private PublisherLogic publisherLogic;
 
@@ -28,25 +27,25 @@ public class PublisherSample {
     }
 
     public void addNews() throws IOException {
-        if (allTopics.getValue() != null && !newsToTopic.getText().isEmpty()) {
-            publisherLogic.addNewNews(allTopics.getValue(), newsToTopic.getText());
-            newsToTopic.clear();
+        if (allTopics.getValue() != null && !newsToCurrentTopic.getText().isEmpty()) {
+            publisherLogic.addNewNews(allTopics.getValue(), newsToCurrentTopic.getText());
+            newsToCurrentTopic.clear();
         }
     }
 
     public void addTopic() throws IOException {
-        if (!newsToTopic.getText().isEmpty()) {
-            System.out.println("Mam :" + newsToTopic.getText());
-            publisherLogic.addNewTopic(newsToTopic.getText());
+        if (!newsToCurrentTopic.getText().isEmpty()) {
+            System.out.println("Mam :" + newsToCurrentTopic.getText());
+            publisherLogic.addTopic(newsToCurrentTopic.getText());
             clear();
         }
     }
 
     public void deleteTopicNews() throws IOException {
-        if (!newsToTopic.getText().isEmpty()) {
+        if (!newsToCurrentTopic.getText().isEmpty()) {
             //System.out.println("Mam :"+ newsToTopic.getText());
-            publisherLogic.deleteTopicNews(allTopics.getValue(), newsToTopic.getText());
-            newsToTopic.clear();
+            publisherLogic.deleteTopicNews(allTopics.getValue(), newsToCurrentTopic.getText());
+            newsToCurrentTopic.clear();
         }
     }
 

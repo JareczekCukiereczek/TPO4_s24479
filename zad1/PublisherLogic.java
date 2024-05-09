@@ -23,34 +23,37 @@ public class PublisherLogic {
         if (response != null && response.startsWith("0")) {
             String result = publisher.receiveMessage();
             if (result != null && !result.isEmpty()) {
-                topics.addAll(stringToList(result));
+                topics.addAll(parseToList(result));
             }
         }
         return topics;
     }
 
-    public String addNewTopic(String topic) throws IOException {
+    public String addTopic(String topic) throws IOException {
         publisher.sendMessage(addTopic + topic);
+        System.out.println("Wysłałem do dodania topic: " + addTopic+ topic);
         return publisher.receiveMessage();
     }
     public String deleteTopic(String topic) throws IOException {
         publisher.sendMessage(deleteTopic + topic);
+        System.out.println("Wysłałem do usuniecia topic: " + deleteTopic+ topic);
         return publisher.receiveMessage();
     }
 
 
     public String deleteTopicNews(String topic, String news) throws IOException {
         publisher.sendMessage(deleteTopicNews + topic + ":" + news);
-        //System.out.println("Wysłałem " + deleteTopic+ topic);
+        System.out.println("Wysłałem do usuniecia news: " + deleteTopicNews+ topic);
         return publisher.receiveMessage();
     }
 
     public String addNewNews(String topic, String news) throws IOException {
         publisher.sendMessage(addNews + topic + ":" + news);
+        System.out.println("Wysłałem do dodania news: " + addNews+ topic);
         return publisher.receiveMessage();
     }
 
-    private List<String> stringToList(String response) {
+    private List<String> parseToList(String response) {
         return List.of(response.split(":"));
     }
 

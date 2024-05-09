@@ -21,11 +21,11 @@
     <children>
         <AnchorPane prefHeight="800.0" prefWidth="600.0" GridPane.columnIndex="1" stylesheets="@client.css">
             <children>
-                <TextField fx:id="username" layoutX="10.0" layoutY="18.0" prefWidth="150.0" />
+                <TextField fx:id="user" layoutX="10.0" layoutY="18.0" prefWidth="150.0" />
                 <ComboBox fx:id="userTopics" layoutX="10.0" layoutY="50.0" prefWidth="150.0" />
-                <Button layoutX="10.0" layoutY="90.0" mnemonicParsing="false" onAction="#subscribe" text="Sub" />
-                <Button layoutX="10.0" layoutY="130.0" mnemonicParsing="false" onAction="#unsubscribe" text="Unsub" />
-                <Button layoutX="10.0" layoutY="170.0" mnemonicParsing="false" onAction="#refresh" text="Refresh" />
+                <Button layoutX="10.0" layoutY="90.0" mnemonicParsing="false" onAction="#subscribeCurrTopic" text="Subs" />
+                <Button layoutX="10.0" layoutY="130.0" mnemonicParsing="false" onAction="#unsubscribeCurrTopic" text="Unsubs" />
+                <Button layoutX="10.0" layoutY="170.0" mnemonicParsing="false" onAction="#refreshAll" text="Refresh" />
             </children>
         </AnchorPane>
         <AnchorPane>

@@ -11,7 +11,7 @@ public class ClientController {
     public ComboBox<String> allTopics;
     public ComboBox<String> userTopics;
     public TextArea topicNews;
-    public TextField username;
+    public TextField user;
 
     private Client client;
 
@@ -22,22 +22,26 @@ public class ClientController {
         refreshTopicNews();
     }
 
-    public void unsubscribe() throws IOException {
-        String message = client.unSubscribe(userTopics.getValue());
+    public void subscribeCurrTopic() throws IOException {
+        String message = client.subscribeTopic(allTopics.getValue());
+        refreshUserTopics();
+        refreshTopicNews();
+    }
+    public void unsubscribeCurrTopic() throws IOException {
+        String message = client.unsubscribeTopic(userTopics.getValue());
         refreshUserTopics();
         refreshTopicNews();
     }
 
-    public void subscribe() throws IOException {
-        String message = client.subscribe(allTopics.getValue());
-        refreshUserTopics();
-        refreshTopicNews();
-    }
-
-    public void refresh() throws IOException {
+    public void refreshAll() throws IOException {
         refreshAllTopics();
         refreshUserTopics();
         refreshTopicNews();
+    }
+    private void refreshUserTopics() throws IOException {
+        List<String> userTopicsList = client.getMyTopics();
+        userTopics.getItems().clear();
+        userTopics.getItems().addAll(userTopicsList);
     }
 
     private void refreshAllTopics() throws IOException {
@@ -46,17 +50,12 @@ public class ClientController {
         allTopics.getItems().addAll(topics);
     }
 
-    private void refreshUserTopics() throws IOException {
-        List<String> userTopicsList = client.getMyTopics();
-        userTopics.getItems().clear();
-        userTopics.getItems().addAll(userTopicsList);
-    }
 
     private void refreshTopicNews() throws IOException {
         StringBuilder result = new StringBuilder();
         for (String topic : userTopics.getItems()) {
             result.append(topic).append("\n");
-            List<String> news = client.getNewsOnTopic(topic);
+            List<String> news = client.getNewsTopic(topic);
             for (String singleNews : news) {
                 result.append(singleNews).append("\n");
             }

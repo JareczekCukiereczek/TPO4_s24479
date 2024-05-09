@@ -12,10 +12,10 @@ public class PublisherGUI extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("publisherSample.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("publisher.fxml"));
             Parent root = fxmlLoader.load();
 
-            PublisherSample controller = fxmlLoader.getController();
+            PublisherGUIOperation controller = fxmlLoader.getController();
             controller.setPublisherLogic(new PublisherLogic());
 
             primaryStage.setTitle("Publisher s24479");
