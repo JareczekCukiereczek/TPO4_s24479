@@ -34,7 +34,7 @@ public class Client extends Application {
         }
     }
     public List<String> getAllTopics() throws IOException {
-        printWriter.println(this.name + ":getAllTopics");
+        printWriter.println(this.name + "-getAllTopics");
         String response = reader.readLine();
         boolean correct = response.startsWith("0");
 
@@ -46,7 +46,7 @@ public class Client extends Application {
         }
     }
     public List<String> getMyTopics() throws IOException {
-        printWriter.println(this.name + ":getMyTopics");
+        printWriter.println(this.name + "-getMyTopics");
         String response = reader.readLine();
 
         if (response == null || response.isEmpty()) {
@@ -55,7 +55,6 @@ public class Client extends Application {
 
         boolean correct = response.startsWith("0");
         String result = correct ? reader.readLine() : "Błąd wystąpił";
-
         if (result.isEmpty()) {
             return new ArrayList<>();
         } else {
@@ -64,10 +63,9 @@ public class Client extends Application {
     }
 
     public String subscribeTopic(String topic) throws IOException {
-        printWriter.println(this.name + ":subscribe:" + topic);
+        printWriter.println(this.name + "-subscribe-" + topic);
         String response = reader.readLine();
         System.out.println(response);
-
         if (response.startsWith("0")) {
             return reader.readLine();
         } else {
@@ -76,7 +74,7 @@ public class Client extends Application {
     }
 
     public String unsubscribeTopic(String topic) throws IOException {
-        printWriter.println(this.name + ":unsubscribe:" + topic);
+        printWriter.println(this.name + "-unsubscribe-" + topic);
         String response = reader.readLine();
         boolean correct = response.startsWith("0");
 
@@ -89,7 +87,7 @@ public class Client extends Application {
 
 
     public List<String> getNewsTopic(String topic) throws IOException {
-        printWriter.println(this.name + ":newsOnTopic:" + topic);
+        printWriter.println(this.name + "-newsOnTopic-" + topic);
         String response = reader.readLine();
 
         if (response == null || response.isEmpty()) {
@@ -112,7 +110,7 @@ public class Client extends Application {
         this.name = name;
     }
     private List<String> stringToList(String response) {
-        String[] split = response.split(":");
+        String[] split = response.split("-");
         return new ArrayList<String>(Arrays.asList(split));
     }
 
@@ -122,13 +120,11 @@ public class Client extends Application {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("client.fxml"));
             Parent root = fxmlLoader.load();
-
             ClientController controller = fxmlLoader.getController();
             if (this.name == null) {
                 this.name = "client";
             }
             controller.setClient(this);
-
             primaryStage.setTitle("Klient s24479");
             primaryStage.setScene(new Scene(root, 1920, 1080));
             primaryStage.show();

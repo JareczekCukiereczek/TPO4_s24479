@@ -6,17 +6,17 @@ import java.util.List;
 
 public class PublisherLogic {
     private Publisher publisher;
-    public String addTopic = ":addTopic:";
-    public String deleteTopicNews = ":deleteNewsTopic:";
-    public String addNews=":addNewsTopic:";
-    public String deleteTopic = ":deleteTopic:";
+    public String addTopic = "-addTopic-";
+    public String deleteTopicNews = "-deleteNewsTopic-";
+    public String addNews="-addNewsTopic-";
+    public String deleteTopic = "-deleteTopic-";
 
     public PublisherLogic() throws Exception {
         publisher = new Publisher();
     }
 
     public List<String> getAllTopics() throws IOException {
-        publisher.sendMessage(":getAllTopics");
+        publisher.sendMessage("-getAllTopics");
         String response = publisher.receiveMessage();
         List<String> topics = new ArrayList<>();
 
@@ -42,19 +42,19 @@ public class PublisherLogic {
 
 
     public String deleteTopicNews(String topic, String news) throws IOException {
-        publisher.sendMessage(deleteTopicNews + topic + ":" + news);
+        publisher.sendMessage(deleteTopicNews + topic + "-" + news);
         System.out.println("Wysłałem do usuniecia news: " + deleteTopicNews+ topic);
         return publisher.receiveMessage();
     }
 
     public String addNewNews(String topic, String news) throws IOException {
-        publisher.sendMessage(addNews + topic + ":" + news);
+        publisher.sendMessage(addNews + topic + "-" + news);
         System.out.println("Wysłałem do dodania news: " + addNews+ topic);
         return publisher.receiveMessage();
     }
 
     private List<String> parseToList(String response) {
-        return List.of(response.split(":"));
+        return List.of(response.split("-"));
     }
 
 

@@ -116,7 +116,7 @@ public class Server {
                     }
                 }
             }
-            String[] requestToParse = request.toString().split(":");
+            String[] requestToParse = request.toString().split("-");
             String client = requestToParse[0];
             String command = requestToParse[1];
 
@@ -281,7 +281,7 @@ public class Server {
             BufferedReader reader = new BufferedReader(new FileReader(path));
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] mapArray = line.split(":");
+                String[] mapArray = line.split("-");
                 List<String> helperList = new ArrayList<>();
                 for (int i = 1; i < mapArray.length; i++) {
                     helperList.add(mapArray[i]);
@@ -310,7 +310,7 @@ public class Server {
             BufferedReader reader = new BufferedReader(new FileReader(path));
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] mapArray = line.split(":");
+                String[] mapArray = line.split("-");
                 List<String> helperList = new ArrayList<>();
                 for (int i = 1; i < mapArray.length; i++) {
                     helperList.add(mapArray[i]);
@@ -335,7 +335,7 @@ public class Server {
         for (Map.Entry<String, List<String>> entry : map.entrySet()) {
             saver.append(entry.getKey());
             for (String value : entry.getValue()) {
-                saver.append(":").append(value);
+                saver.append("-").append(value);
             }
             saver.append("\n");
         }
@@ -352,7 +352,7 @@ public class Server {
             return "";
         }
         for (String s : list) {
-            result.append(s).append(":");
+            result.append(s).append("-");
         }
         return result.toString();
     }
