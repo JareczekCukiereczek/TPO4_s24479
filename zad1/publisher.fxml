@@ -9,11 +9,11 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="zad1.PublisherGUIOperation" stylesheets="@kolorki.css">
     <children>
         <ComboBox fx:id="allTopics" layoutX="40.0" layoutY="40.0" prefWidth="200.0" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="40.0" />
-        <Button onAction="#addNews" layoutX="40.0" layoutY="100.0" mnemonicParsing="false" text="Dodaj nowy news" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="100.0" />
-        <Button onAction="#addTopic" layoutX="260.0" layoutY="40.0" mnemonicParsing="false" text="Dodaj" AnchorPane.leftAnchor="260.0" AnchorPane.topAnchor="40.0" />
+        <Button onAction="#newsAdding" layoutX="40.0" layoutY="100.0" mnemonicParsing="false" text="Dodaj nowy news" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="100.0" />
+        <Button onAction="#topicAdding" layoutX="260.0" layoutY="40.0" mnemonicParsing="false" text="Dodaj" AnchorPane.leftAnchor="260.0" AnchorPane.topAnchor="40.0" />
         <Button onAction="#clear" layoutX="40.0" layoutY="100.0" prefHeight="50.0" prefWidth="200.0" text="Clear" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="100.0" />
-        <Button onAction="#deleteTopicNews" layoutX="260.0" layoutY="100.0" mnemonicParsing="false" text="Usuń news" AnchorPane.leftAnchor="260.0" AnchorPane.topAnchor="100.0" />
-        <Button onAction="#deleteTopic" layoutX="340.0" layoutY="40.0" mnemonicParsing="false" text="Usuń topic" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="40.0" />
+        <Button onAction="#newsDeleting" layoutX="260.0" layoutY="100.0" mnemonicParsing="false" text="Usuń news" AnchorPane.leftAnchor="260.0" AnchorPane.topAnchor="100.0" />
+        <Button onAction="#topicDelete" layoutX="340.0" layoutY="40.0" mnemonicParsing="false" text="Usuń topic" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="40.0" />
         <TextArea fx:id="newsToCurrentTopic" layoutX="40.0" layoutY="160.0" prefHeight="400.0" prefWidth="720.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="160.0" />
     </children>
 </AnchorPane>

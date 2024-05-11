@@ -14,10 +14,8 @@ public class PublisherGUI extends Application {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("publisher.fxml"));
             Parent root = fxmlLoader.load();
-
             PublisherGUIOperation controller = fxmlLoader.getController();
             controller.setPublisherLogic(new PublisherLogic());
-
             primaryStage.setTitle("Publisher s24479");
             primaryStage.setScene(new Scene(root, 1920, 1080));
             primaryStage.show();

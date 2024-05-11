@@ -8,54 +8,58 @@ import java.io.IOException;
 import java.util.List;
 
 public class ClientController {
-    public ComboBox<String> allTopics;
-    public ComboBox<String> userTopics;
     public TextArea topicNews;
+    public ComboBox<String> userTopic;//zm
     public TextField user;
-
+    public ComboBox<String> allTopic;
     private Client client;
 
-    public void setClient(Client client) throws IOException {
+    public void setClient(Client client){
         this.client = client;
         refreshAllTopics();
         refreshUserTopics();
         refreshTopicNews();
     }
 
-    public void subscribeCurrTopic() throws IOException {
-        String message = client.subscribeTopic(allTopics.getValue());
+    public void subscribeCurrTopic(){
+        client.subscribeTopic(allTopic.getValue());
         refreshUserTopics();
         refreshTopicNews();
     }
-    public void unsubscribeCurrTopic() throws IOException {
-        String message = client.unsubscribeTopic(userTopics.getValue());
+    public void unsubscribeCurrTopic(){
+        client.unsubscribeTopic(userTopic.getValue());
         refreshUserTopics();
         refreshTopicNews();
     }
 
-    public void refreshAll() throws IOException {
+    public void refreshAll(){
         refreshAllTopics();
         refreshUserTopics();
         refreshTopicNews();
     }
-    private void refreshUserTopics() throws IOException {
-        List<String> userTopicsList = client.getMyTopics();
-        userTopics.getItems().clear();
-        userTopics.getItems().addAll(userTopicsList);
+    private void refreshUserTopics(){
+        List<String> userTopicsList = client.getMyListOfTopic();
+        userTopic.getItems().clear();
+        userTopic.getItems().addAll(userTopicsList);
     }
 
-    private void refreshAllTopics() throws IOException {
+    private void refreshAllTopics(){
         List<String> topics = client.getAllTopics();
-        allTopics.getItems().clear();
-        allTopics.getItems().addAll(topics);
+        allTopic.getItems().clear();
+        allTopic.getItems().addAll(topics);
     }
 
 
-    private void refreshTopicNews() throws IOException {
+    private void refreshTopicNews(){
         StringBuilder result = new StringBuilder();
-        for (String topic : userTopics.getItems()) {
+        for (String topic : userTopic.getItems()) {
             result.append(topic).append("\n");
-            List<String> news = client.getNewsTopic(topic);
+            List<String> news = null;
+            try {
+                news = client.getNewsTopic(topic);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             for (String singleNews : news) {
                 result.append(singleNews).append("\n");
             }

@@ -22,7 +22,7 @@
         <AnchorPane prefHeight="800.0" prefWidth="600.0" GridPane.columnIndex="1" stylesheets="@client.css">
             <children>
                 <TextField fx:id="user" layoutX="10.0" layoutY="18.0" prefWidth="150.0" />
-                <ComboBox fx:id="userTopics" layoutX="10.0" layoutY="50.0" prefWidth="150.0" />
+                <ComboBox fx:id="userTopic" layoutX="10.0" layoutY="50.0" prefWidth="150.0" />
                 <Button layoutX="10.0" layoutY="90.0" mnemonicParsing="false" onAction="#subscribeCurrTopic" text="Subs" />
                 <Button layoutX="10.0" layoutY="130.0" mnemonicParsing="false" onAction="#unsubscribeCurrTopic" text="Unsubs" />
                 <Button layoutX="10.0" layoutY="170.0" mnemonicParsing="false" onAction="#refreshAll" text="Refresh" />
@@ -30,7 +30,7 @@
         </AnchorPane>
         <AnchorPane>
             <children>
-                <ComboBox fx:id="allTopics" layoutX="10.0" layoutY="160.0" prefWidth="150.0" />
+                <ComboBox fx:id="allTopic" layoutX="10.0" layoutY="160.0" prefWidth="150.0" />
                 <TextArea fx:id="topicNews" layoutX="170.0" layoutY="100.0" prefHeight="880.0" prefWidth="330.0" />
             </children>
         </AnchorPane>

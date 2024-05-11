@@ -6,7 +6,7 @@
 }
 
 /* Style for ComboBox with fx:id="userTopics" */
-#userTopics {
+#userTopic {
     -fx-background-color: #fff; /* White background */
     -fx-border-color: #ccc; /* Light gray border */
     -fx-border-radius: 5px; /* Rounded border */

@@ -1,5 +1,5 @@
-Cars-passat-gwagon-audi s3-bmw-mercedes-ferrari-cupra-maserati-bugatti-ford-ibiza-brabus-fiat
-Company-gucci-prada-lv-nike
+Cars-passat-gwagon-audi s3-bmw-mercedes-ferrari-cupra-maserati-bugatti-ford-ibiza
+Company-gucci-prada-lv-nike-adidas
 Pogoda-Warszawa20-Poznan40
 Technology-iphone12-macbook
 Programming-js-java-c#-docker

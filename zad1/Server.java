@@ -13,25 +13,26 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Server {
+    private Map<String, List<String>> topicsClients = new HashMap<>();
     private List<String> topics = new ArrayList<>();
     private Map<String, List<String>> topicNews = new HashMap<>();
-    private Map<String, List<String>> clientsTopics = new HashMap<>();
     private ServerSocketChannel socketChannel = null;
     private Selector selector = null;
     public String topicsPath="zad1/data/topics.txt";
     public String newsPath="zad1/data/news.txt";
     public String topicsClientsPath="zad1/data/topicsClients.txt";
-    //oblsuga requestu
+    //obslsuga requestu
     private static Charset charset = StandardCharsets.UTF_8;
     private ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
     private StringBuffer request = new StringBuffer();
+    private StringBuffer messageRespon = new StringBuffer();
 
-    public Server(String host, int port) {
+    public Server(String hostname, int port) {
         initializeTopics();
         initializeNews();
         initializeClientsTopics();
-        startServer(host, port);
-        System.out.println("Server ready for connections " + port);
+        startServer(hostname, port);
+        System.out.println("Server ready for connections");
         srvConnections();
     }
 
@@ -46,8 +47,8 @@ public class Server {
     }
 
     private void initializeClientsTopics() {
-        loadClientTopicsFromFile(topicsClientsPath, clientsTopics);
-        clientsTopics.forEach((key, value) -> System.out.println(key + " " + value));
+        loadClientTopicsFromFile(topicsClientsPath, topicsClients);
+        topicsClients.forEach((key, value) -> System.out.println(key + " " + value));
     }
 
     private void startServer(String host, int port) {
@@ -62,7 +63,47 @@ public class Server {
             System.exit(1);
         }
     }
+    //obsługa multiclient
+/*
+    private void startServer(String host, int port) {
+        try {
+            ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.configureBlocking(false);
+            serverSocketChannel.bind(new InetSocketAddress(host, port));
+            Selector selector = Selector.open();
+            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
+            while (true) {
+                selector.select();
+
+                Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+                while (iterator.hasNext()) {
+                    SelectionKey key = iterator.next();
+                    iterator.remove();
+
+                    if (key.isAcceptable()) {
+                        SocketChannel clientSocket = serverSocketChannel.accept();
+                        clientSocket.configureBlocking(false);
+                        clientSocket.register(selector, SelectionKey.OP_READ);
+                        System.out.println("New client connected");
+                    } else if (key.isReadable()) {
+                        SocketChannel clientSocket = (SocketChannel) key.channel();
+                        ByteBuffer buffer = ByteBuffer.allocate(1024);
+                        int bytesRead = clientSocket.read(buffer);
+                        if (bytesRead > 0) {
+                            buffer.flip();
+                            CharBuffer charBuffer = charset.decode(buffer);
+                            String request = charBuffer.toString();
+                            new Thread(() -> serviceRequest(clientSocket, request)).start();
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+*/
     private void srvConnections() {
         while (true) {
             try {
@@ -79,9 +120,10 @@ public class Server {
                         socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
                         continue;
                     }
+                    //czytanie
                     if (key.isReadable()) {
                         SocketChannel socketChannel = (SocketChannel) key.channel();
-                        serviceRequest(socketChannel);
+                        requestProccesor(socketChannel);
                         continue;
                     }
                 }
@@ -91,28 +133,34 @@ public class Server {
             }
         }
     }
-
-
-
-    private void serviceRequest(SocketChannel socketChannel) {
-        if (!socketChannel.isOpen()) {
+    //obsluga requestow
+    private void requestProccesor(SocketChannel socketChannel) {
+        if (!socketChannel.isOpen())
+        {
             return;
         }
         request.setLength(0);
         byteBuffer.clear();
 
-        try {
+        try
+        {
             readLoop:
-            while (true) {
+            while (true)
+            {
                 int i = socketChannel.read(byteBuffer);
-                if (i > 0) {
+                if (i > 0)
+                {
                     byteBuffer.flip();
                     CharBuffer charBuffer = charset.decode(byteBuffer);
-                    while (charBuffer.hasRemaining()) {
+                    while (charBuffer.hasRemaining())
+                    {
                         char chars = charBuffer.get();
-                        if (chars == '\n' || chars == '\r') {
+                        if (chars == '\n' || chars == '\r')
+                        {
                             break readLoop;
-                        } else {
+                        }
+                        else
+                        {
                             request.append(chars);
                         }
                     }
@@ -121,6 +169,7 @@ public class Server {
             String[] requestToParse = request.toString().split("-");
             String client = requestToParse[0];
             String command = requestToParse[1];
+
 
 
             switch (client) {
@@ -139,11 +188,12 @@ public class Server {
                         case "addTopic":
                             if (requestToParse.length != 3) {
                                 responseSender(socketChannel, 1, null);
-                                System.out.println("Jestem w addTopic1");
+                                System.out.println("Adding topic");
                             } else {
                                 topics.add(requestToParse[2]);
-                                System.out.println("Jestem w addTopic2");
-                                ListSaveFile(topicsPath, topics);
+                                System.out.println("Adding topic");
+                                //MapSaveFile(topicsClientsPath, topicsClients);
+                                ListSaveFile(topicsPath,topics);
                                 responseSender(socketChannel, 0, " " + requestToParse[2]);
                             }
                             break;
@@ -151,11 +201,12 @@ public class Server {
                             if (requestToParse.length != 3) {
                                 responseSender(socketChannel, 1, null);
                             } else if (topicNews.containsKey(requestToParse[2]) && topicNews.get(requestToParse[2]).size() != 0) {
-                                System.out.println("Jestem w deleteTopic1");
+                                System.out.println("Deleting topic");
                                 responseSender(socketChannel, 0, "");
                             } else {
                                 topics.remove(requestToParse[2]);
-                                System.out.println("Usuwam topic");
+                                System.out.println("Deleting topic");
+                                //MapSaveFile(topicsClientsPath, topicsClients);
                                 ListSaveFile(topicsPath, topics);
                                 responseSender(socketChannel, 0, "" + requestToParse[2]);
                             }
@@ -172,18 +223,17 @@ public class Server {
                         case "deleteNewsTopic":
                             if (requestToParse.length != 4) {
                                 responseSender(socketChannel, 1, null);
-                                System.out.println("Jestem w deleteNewsTopic1");
                             } else {
-                                System.out.println("Jestem w deleteNewsTopic2");
+                                System.out.println("Deleting  deleteNewsTopic");
                                 String topic = requestToParse[2];
                                 String newsToDelete = requestToParse[3];
                                 if (topicNews.containsKey(topic) && topicNews.get(topic).contains(newsToDelete)) {
                                     topicNews.get(topic).remove(newsToDelete);
                                     MapSaveFile(newsPath, topicNews);
-                                    responseSender(socketChannel, 0, "Usunięto wiadomość z tematu " + topic);
+                                    responseSender(socketChannel, 0, "Deleted topic from " + topic);
                                 } else {
-                                    System.out.println("Podana wiadomość nie istnieje w temacie");
-                                    responseSender(socketChannel, 1, "Podana wiadomość nie istnieje w temacie " + topic);
+                                    System.out.println("News doesn't exists");
+                                    responseSender(socketChannel, 1, "News doesn't exists in topic " + topic);
                                 }
                             }
                             break;
@@ -192,25 +242,21 @@ public class Server {
 
                 default:
                     switch (command) {
-                        case "bye":
-                            responseSender(socketChannel, 0, null);
-                            socketChannel.close();
-                            socketChannel.socket().close();
-                            break;
                         case "subscribe":
                             if (requestToParse.length != 3) {
                                 responseSender(socketChannel, 1, null);
                             } else {
-                                clientsTopics.computeIfAbsent(client, k -> new ArrayList<>()).add(requestToParse[2]);
+                                topicsClients.computeIfAbsent(client, k -> new ArrayList<>()).add(requestToParse[2]);
                                 responseSender(socketChannel, 0, "subscribe");
-                                MapSaveFile(topicsClientsPath, clientsTopics);
+                                MapSaveFile(topicsClientsPath, topicsClients);
                             }
                             break;
                         case "unsubscribe":
                             if (requestToParse.length != 3) {
                                 responseSender(socketChannel, 1, null);
                             } else {
-                                clientsTopics.get(client).remove(requestToParse[2]);
+                                topicsClients.get(client).remove(requestToParse[2]);
+                                MapSaveFile(topicsClientsPath, topicsClients);
                                 responseSender(socketChannel, 0, "unsubscribe");
                             }
                             break;
@@ -218,10 +264,10 @@ public class Server {
                             responseSender(socketChannel, 0, listToStringFormat(topics));
                             break;
                         case "getMyTopics":
-                            if (!clientsTopics.containsKey(client)) {
+                            if (!topicsClients.containsKey(client)) {
                                 responseSender(socketChannel, 0, "");
                             } else {
-                                responseSender(socketChannel, 0, listToStringFormat(clientsTopics.get(client)));
+                                responseSender(socketChannel, 0, listToStringFormat(topicsClients.get(client)));
                             }
                             break;
                         case "newsOnTopic":
@@ -242,40 +288,11 @@ public class Server {
         }
     }
 
-    private StringBuffer response = new StringBuffer();
-
-    private void responseSender(SocketChannel channel, int ssss, String mess) throws IOException {
-        response.setLength(0);
-        response.append(ssss);
-        response.append("\n");
-        if (mess != null) {
-            response.append(mess);
-            response.append("\n");
-        }
-        ByteBuffer byteBuffer = charset.encode(CharBuffer.wrap(response));
-        channel.write(byteBuffer);
-    }
-
-    public void saveToFile(String path, String textToSave) {
-        BufferedWriter bufferedWriter = null;
-        try {
-            File file = new File(path);
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            FileWriter fileWriter = new FileWriter(file);
-            bufferedWriter = new BufferedWriter(fileWriter);
+    public void saveFile(String path, String textToSave) {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path))) {
             bufferedWriter.write(textToSave);
         } catch (IOException exception) {
             exception.printStackTrace();
-        }
-        finally {
-            try{
-                if(bufferedWriter!=null)
-                    bufferedWriter.close();
-            }catch(Exception ex){
-
-            }
         }
     }
     private void loaderNewsFile(String path, Map<String, List<String>> map) {
@@ -296,14 +313,13 @@ public class Server {
     }
 
     private void loaderTopicsFile(String paths, List<String> list) {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(paths));
+        try (BufferedReader reader = new BufferedReader(new FileReader(paths))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 list.add(line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error reading file: " + e.getMessage());
         }
     }
 
@@ -329,7 +345,7 @@ public class Server {
         for (String item : list) {
             toSave.append(item).append("\n");
         }
-        saveToFile(path, toSave.toString());
+        saveFile(path, toSave.toString());
     }
 
     private void MapSaveFile(String path, Map<String, List<String>> map) {
@@ -341,21 +357,28 @@ public class Server {
             }
             saver.append("\n");
         }
-        saveToFile(path, saver.toString());
-    }
-
-    public static void main(String[] args) {
-        new Server("localhost", 5001);
+        saveFile(path, saver.toString());
     }
 
     public static String listToStringFormat(List<String> list) {
-        StringBuilder result = new StringBuilder();
         if (list.isEmpty()) {
             return "";
         }
-        for (String s : list) {
-            result.append(s).append("-");
+        return String.join("-", list) + "-";
+    }
+
+    private void responseSender(SocketChannel channel, int ssss, String mess) throws IOException {
+        messageRespon.setLength(0);
+        messageRespon.append(ssss);
+        messageRespon.append("\n");
+        if (mess != null) {
+            messageRespon.append(mess);
+            messageRespon.append("\n");
         }
-        return result.toString();
+        ByteBuffer byteBuffer = charset.encode(CharBuffer.wrap(messageRespon));
+        channel.write(byteBuffer);
+    }
+    public static void main(String[] args) {
+        new Server("localhost", 4001);
     }
 }

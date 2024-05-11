@@ -10,17 +10,19 @@ public class PublisherLogic {
     public String deleteTopicNews = "-deleteNewsTopic-";
     public String addNews="-addNewsTopic-";
     public String deleteTopic = "-deleteTopic-";
+    public String getAll="-getAllTopics";
+    public String starter="0";
 
     public PublisherLogic() throws Exception {
         publisher = new Publisher();
     }
 
-    public List<String> getAllTopics() throws IOException {
-        publisher.sendMessage("-getAllTopics");
+    public List<String> getTopics() throws IOException {
+        publisher.sendMessage(getAll);
         String response = publisher.receiveMessage();
         List<String> topics = new ArrayList<>();
 
-        if (response != null && response.startsWith("0")) {
+        if (response != null && response.startsWith(starter)) {
             String result = publisher.receiveMessage();
             if (result != null && !result.isEmpty()) {
                 topics.addAll(parseToList(result));
@@ -29,27 +31,27 @@ public class PublisherLogic {
         return topics;
     }
 
-    public String addTopic(String topic) throws IOException {
+    public String addTopicOperation(String topic) throws IOException {
         publisher.sendMessage(addTopic + topic);
-        System.out.println("Wysłałem do dodania topic: " + addTopic+ topic);
+        System.out.println("Send to add topic: " + addTopic+ topic);
         return publisher.receiveMessage();
     }
-    public String deleteTopic(String topic) throws IOException {
+    public String deleteTopicOperation(String topic) throws IOException {
         publisher.sendMessage(deleteTopic + topic);
-        System.out.println("Wysłałem do usuniecia topic: " + deleteTopic+ topic);
+        System.out.println("Send to delete topic: " + deleteTopic+ topic);
         return publisher.receiveMessage();
     }
 
 
     public String deleteTopicNews(String topic, String news) throws IOException {
         publisher.sendMessage(deleteTopicNews + topic + "-" + news);
-        System.out.println("Wysłałem do usuniecia news: " + deleteTopicNews+ topic);
+        System.out.println("Send to delete news: " + deleteTopicNews+ topic);
         return publisher.receiveMessage();
     }
 
     public String addNewNews(String topic, String news) throws IOException {
         publisher.sendMessage(addNews + topic + "-" + news);
-        System.out.println("Wysłałem do dodania news: " + addNews+ topic);
+        System.out.println("Send to add news: " + addNews+ topic);
         return publisher.receiveMessage();
     }
 

@@ -6,45 +6,55 @@ import javafx.scene.control.TextArea;
 import java.io.IOException;
 
 public class PublisherGUIOperation {
+    private PublisherLogic publisherLogic;
     public TextArea newsToCurrentTopic;
     public ComboBox<String> allTopics;
-    private PublisherLogic publisherLogic;
 
     public void setPublisherLogic(PublisherLogic publisherLogic) throws IOException {
         this.publisherLogic = publisherLogic;
         refresh();
     }
 
-    public void refresh() throws IOException {
-        if (allTopics != null) {
-            allTopics.getItems().clear();
-            allTopics.getItems().addAll(publisherLogic.getAllTopics());
-        }
-    }
     public void refreshComboBox() throws IOException {
         allTopics.getItems().clear();
-        allTopics.getItems().addAll(publisherLogic.getAllTopics());
+        allTopics.getItems().addAll(publisherLogic.getTopics());
     }
 
-    public void addNews() throws IOException {
+    public void newsAdding() {
         if (allTopics.getValue() != null && !newsToCurrentTopic.getText().isEmpty()) {
-            publisherLogic.addNewNews(allTopics.getValue(), newsToCurrentTopic.getText());
+            try {
+                publisherLogic.addNewNews(allTopics.getValue(), newsToCurrentTopic.getText());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             newsToCurrentTopic.clear();
         }
     }
 
-    public void addTopic() throws IOException {
+    public void topicAdding()  {
         if (!newsToCurrentTopic.getText().isEmpty()) {
-            System.out.println("Mam :" + newsToCurrentTopic.getText());
-            publisherLogic.addTopic(newsToCurrentTopic.getText());
-            clear();
+            System.out.println("Added :" + newsToCurrentTopic.getText());
+            try {
+                publisherLogic.addTopicOperation(newsToCurrentTopic.getText());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            newsToCurrentTopic.clear();
+            try {
+                clear();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public void deleteTopicNews() throws IOException {
+    public void newsDeleting()  {
         if (!newsToCurrentTopic.getText().isEmpty()) {
-            //System.out.println("Mam :"+ newsToTopic.getText());
-            publisherLogic.deleteTopicNews(allTopics.getValue(), newsToCurrentTopic.getText());
+            try {
+                publisherLogic.deleteTopicNews(allTopics.getValue(), newsToCurrentTopic.getText());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             newsToCurrentTopic.clear();
         }
     }
@@ -55,10 +65,24 @@ public class PublisherGUIOperation {
         refreshComboBox();
     }
 
-    public void deleteTopic() throws IOException {
+    public void topicDelete()  {
         if (allTopics.getValue() != null) {
-            publisherLogic.deleteTopic(allTopics.getValue());
-            clear();
+            try {
+                publisherLogic.deleteTopicOperation(allTopics.getValue());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                clear();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public void refresh() throws IOException {
+        if (allTopics != null) {
+            allTopics.getItems().clear();
+            allTopics.getItems().addAll(publisherLogic.getTopics());
         }
     }
 

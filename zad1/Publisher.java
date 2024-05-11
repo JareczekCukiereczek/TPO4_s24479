@@ -7,12 +7,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class Publisher {
-    private static final String HOST = "localhost";
-    private static final int PORT = 5001;
     private final String positionName = "publisher";
     private Socket socket;
     private BufferedReader reader;
     private PrintWriter writer;
+    private static final String HOST = "localhost";
+    private static final int PORT = 4001;
 
 
     public Publisher() throws Exception {
@@ -25,7 +25,7 @@ public class Publisher {
         return reader.readLine();
     }
     public void sendMessage(String mess) {
-        System.out.println("Wysłałem : name "+ mess);
+        System.out.println("Sended : name "+ mess);
         writer.println(positionName + mess);
     }
 
